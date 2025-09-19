@@ -97,6 +97,13 @@ mongoose
       demoUser = await User.findOne();
     }
 
+    // Seed admin user if not present
+    let adminUser = await User.findOne({ email: 'admin' });
+    if (!adminUser) {
+      adminUser = await User.create({ name: 'Admin', email: 'admin', password: '12345', role: 'admin', provider: 'local' });
+      console.log('Seeded admin user');
+    }
+
     const issueCount = await Issue.estimatedDocumentCount();
     if (issueCount === 0) {
       // try to map to issueType ids

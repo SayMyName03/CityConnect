@@ -9,6 +9,7 @@ import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
+
 interface LoginPageProps {
   userType: 'citizen' | 'admin';
 }
@@ -22,6 +23,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ userType }) => {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +40,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ userType }) => {
       setIsLoading(false);
     }
   };
+
 
   const handleGoogleLogin = () => {
     window.location.href = `/api/auth/google?role=${userType}`;
