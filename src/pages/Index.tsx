@@ -7,74 +7,107 @@ import ReportModal from "@/components/ReportModal";
 import IssueCard, { Issue } from "@/components/IssueCard";
 import AdminDashboard from "@/components/AdminDashboard";
 import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createIssue, listIssues, upvoteIssue, updateIssueStatus, listLocalities } from "@/lib/api";
 
-// Import sample images
-import samplePothole from "@/assets/sample-pothole.jpg";
-import sampleStreetlight from "@/assets/sample-streetlight.jpg";
-import sampleGarbage from "@/assets/sample-garbage.jpg";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<'citizen' | 'admin'>('citizen');
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [issues, setIssues] = useState<Issue[]>([
-    {
-      id: 1,
-      title: "Pothole near Silk Board Junction",
-      category: "pothole",
-      description:
-        "Large pothole at the approach to Silk Board causing two-wheeler swerves and slowing traffic during peak hours.",
-      location: "Silk Board Junction, HSR Layout, Bengaluru",
-      status: "Reported",
-      upvotes: 12,
-      reportedAt: "2024-12-02",
-      photo: samplePothole,
+  const queryClient = useQueryClient();
+  const { data: issues = [], isLoading } = useQuery({
+    queryKey: ['issues'],
+    queryFn: async () => {
+      const res = await listIssues();
+      // Map API shape to UI Issue type
+      return res.map((it) => ({
+        id: it._id,
+        title: it.title,
+        category: (it as any).issueType?.label ?? (it as any).category,
+        description: it.description,
+        location: it.location,
+        status: it.status as Issue['status'],
+        upvotes: it.upvotes,
+        reportedAt: it.reportedAt ? new Date(it.reportedAt).toLocaleDateString() : '',
+        photo: it.photoUrl || undefined,
+        _raw: it,
+      })) as (Issue & { _raw: any })[];
     },
-    {
-      id: 2,
-      title: "Streetlight outage on 80 Feet Road (Indiranagar)",
-      category: "streetlight",
-      description:
-        "Multiple poles not working between CMH Road junction and 12th Main. Area is very dim after 7 pm.",
-      location: "80 Feet Road, Indiranagar, Bengaluru",
-      status: "In Progress",
-      upvotes: 8,
-      reportedAt: "2024-12-01",
-      photo: sampleStreetlight,
-    },
-    {
-      id: 3,
-      title: "Overflowing garbage near KR Market",
-      category: "garbage",
-      description:
-        "Bins overflowing onto the footpath; stray dogs tearing bags. Needs more frequent BBMP pickup on weekends.",
-      location: "KR Market, Chickpete, Bengaluru",
-      status: "Resolved",
-      upvotes: 15,
-      reportedAt: "2024-11-29",
-      photo: sampleGarbage,
-    },
-  ]);
+  });
 
-  const handleReportSubmit = (newIssue: Issue) => {
-    setIssues(prev => [newIssue, ...prev]);
+  const reportMutation = useMutation({
+    mutationFn: createIssue,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['issues'] });
+      toast.success('Issue reported successfully!');
+    },
+    onError: (err: any) => toast.error(`Failed to report issue: ${err?.message || err}`),
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: Issue['status'] }) => updateIssueStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['issues'] });
+      toast.success('Issue status updated');
+    },
+    onError: () => toast.error('Failed to update status'),
+  });
+
+  const upvoteMutation = useMutation({
+    mutationFn: (id: string) => upvoteIssue(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['issues'] });
+      toast.success('Issue upvoted!');
+    },
+    onError: () => toast.error('Failed to upvote'),
+  });
+
+  const handleReportSubmit = (newIssue: any) => {
+    (async () => {
+      // try to detect locality from coordinates in newIssue.location
+      let localityId: string | undefined = undefined;
+      try {
+        const coordsMatch = (newIssue.location || '').split(',').map((p: string) => p.trim());
+        if (coordsMatch.length === 2 && !isNaN(Number(coordsMatch[0])) && !isNaN(Number(coordsMatch[1]))) {
+          const lat = Number(coordsMatch[0]);
+          const lng = Number(coordsMatch[1]);
+          const localities = await listLocalities();
+          // naive nearest match using Euclidean distance (good enough for small areas)
+          let best: { id?: string; d?: number } = {};
+          localities.forEach((loc: any) => {
+            if (loc.coordinates && typeof loc.coordinates.lat === 'number') {
+              const d = (lat - loc.coordinates.lat) ** 2 + (lng - loc.coordinates.lng) ** 2;
+              if (best.d === undefined || d < best.d) best = { id: loc._id, d };
+            }
+          });
+          if (best.id) localityId = best.id;
+        }
+      } catch (e) {
+        // ignore locality detection errors
+        console.warn('Locality detection failed', e);
+      }
+
+      reportMutation.mutate({
+        title: newIssue.title,
+        category: newIssue.category,
+        description: newIssue.description,
+        location: newIssue.location,
+        photoUrl: newIssue.photo ?? undefined,
+        locality: localityId,
+      });
+    })();
   };
 
-  const handleStatusChange = (id: number, newStatus: string) => {
-    setIssues(prev => prev.map(issue => 
-      issue.id === id 
-        ? { ...issue, status: newStatus as Issue['status'] }
-        : issue
-    ));
-    toast.success(`Issue status updated to ${newStatus}`);
+  const handleStatusChange = (id: number | string, newStatus: string) => {
+    const issue = (issues as any[]).find((it) => it.id === id);
+    if (!issue) return;
+    statusMutation.mutate({ id: issue._raw._id, status: newStatus as Issue['status'] });
   };
 
-  const handleUpvote = (id: number) => {
-    setIssues(prev => prev.map(issue => 
-      issue.id === id 
-        ? { ...issue, upvotes: issue.upvotes + 1 }
-        : issue
-    ));
-    toast.success("Issue upvoted!");
+  const handleUpvote = (id: number | string) => {
+    const issue = (issues as any[]).find((it) => it.id === id);
+    if (!issue) return;
+    upvoteMutation.mutate(issue._raw._id);
   };
 
   return (
@@ -107,6 +140,7 @@ const Index = () => {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {isLoading && <div className="text-muted-foreground">Loading issues…</div>}
                 {issues.map((issue) => (
                   <IssueCard
                     key={issue.id}
@@ -119,7 +153,7 @@ const Index = () => {
           </div>
         ) : (
           <AdminDashboard 
-            issues={issues}
+            issues={issues as Issue[]}
             onStatusChange={handleStatusChange}
           />
         )}

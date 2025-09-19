@@ -109,3 +109,40 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* UI polish and dark-mode aesthetics */
+@layer base {
+  body {
+    transition: background-color 220ms ease, color 220ms ease;
+    background-image: radial-gradient(circle at 10% 10%, rgba(255,255,255,0.02), transparent 10%), radial-gradient(circle at 90% 90%, rgba(255,255,255,0.02), transparent 10%);
+  }
+
+  .card, .bg-card {
+    box-shadow: 0 6px 18px rgba(2,6,23,0.5);
+    transition: box-shadow 200ms ease, transform 200ms ease;
+    border-radius: var(--radius);
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+  }
+
+  .btn, button {
+    transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+  }
+
+  .map-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(1000px 600px at 50% 40%, rgba(0,0,0,0.12), transparent 40%);
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+    border-radius: inherit;
+  }
+}
+
+/* Smooth theme transition helper - add to <html> briefly when toggling theme */
+.theme-transition,
+.theme-transition * {
+  transition: background-color 350ms ease, color 350ms ease, border-color 350ms ease, box-shadow 350ms ease, fill 350ms ease, stroke 350ms ease;
+}

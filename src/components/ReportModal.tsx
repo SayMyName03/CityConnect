@@ -135,11 +135,16 @@ const ReportModal = ({ isOpen, onClose, onSubmit }: ReportModalProps) => {
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pothole">Pothole</SelectItem>
-                <SelectItem value="streetlight">Streetlight</SelectItem>
-                <SelectItem value="garbage">Garbage Collection</SelectItem>
-                <SelectItem value="water-leak">Water Leak</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="waste-management">Waste Management ♻️ (garbage not collected, overflowing bins, illegal dumping)</SelectItem>
+                <SelectItem value="water-issues">Water Issues 💧 (leakage, shortage, contamination, drainage problems)</SelectItem>
+                <SelectItem value="air-quality">Air Quality & Pollution 🌫️ (burning waste, dust, industrial smoke)</SelectItem>
+                <SelectItem value="road-traffic">Road & Traffic 🚦 (potholes, damaged roads, faulty traffic signals, congestion hotspots)</SelectItem>
+                <SelectItem value="public-transport">Public Transport 🚌 (bus/train issues, last-mile connectivity, delays)</SelectItem>
+                <SelectItem value="street-lighting">Street Lighting & Safety 💡 (dark areas, broken lights, unsafe zones)</SelectItem>
+                <SelectItem value="green-spaces">Green Spaces 🌳 (parks maintenance, tree cutting, lack of greenery)</SelectItem>
+                <SelectItem value="flooding">Flooding/Waterlogging 🌊 (especially during rains)</SelectItem>
+                <SelectItem value="energy-issues">Energy Issues ⚡ (power outage, diesel generator use, renewable gaps)</SelectItem>
+                <SelectItem value="other">Other / Miscellaneous 📝</SelectItem>
               </SelectContent>
             </Select>
           </div>

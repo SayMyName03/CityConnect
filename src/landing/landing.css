@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.landing-hero {
+  background-image: linear-gradient(180deg, rgba(14,165,233,0.06), rgba(255,255,255,0));
+}
+
+.landing-page a {
+  text-decoration: none;
+}

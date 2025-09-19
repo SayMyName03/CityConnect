@@ -8,7 +8,7 @@ import IssueCard, { Issue } from "./IssueCard";
 
 interface AdminDashboardProps {
   issues: Issue[];
-  onStatusChange: (id: number, status: string) => void;
+  onStatusChange: (id: number | string, status: string) => void;
 }
 
 const AdminDashboard = ({ issues, onStatusChange }: AdminDashboardProps) => {

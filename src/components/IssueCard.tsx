@@ -7,7 +7,7 @@ import { ChevronUp, MapPin, Calendar, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Issue {
-  id: number;
+  id: number | string;
   title: string;
   category: string;
   description: string;
@@ -15,14 +15,14 @@ export interface Issue {
   status: 'Reported' | 'In Progress' | 'Resolved';
   upvotes: number;
   reportedAt: string;
-  photo?: string;
+  photo?: string | null;
 }
 
 interface IssueCardProps {
   issue: Issue;
   isAdmin?: boolean;
-  onStatusChange?: (id: number, status: string) => void;
-  onUpvote?: (id: number) => void;
+  onStatusChange?: (id: number | string, status: string) => void;
+  onUpvote?: (id: number | string) => void;
 }
 
 const IssueCard = ({ issue, isAdmin = false, onStatusChange, onUpvote }: IssueCardProps) => {
