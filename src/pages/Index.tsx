@@ -19,37 +19,40 @@ const Index = () => {
   const [issues, setIssues] = useState<Issue[]>([
     {
       id: 1,
-      title: "Large Pothole on Main Street",
+      title: "Pothole near Silk Board Junction",
       category: "pothole",
-      description: "Deep pothole near the intersection causing damage to vehicles. Needs immediate attention for safety.",
-      location: "Main Street & 5th Ave",
+      description:
+        "Large pothole at the approach to Silk Board causing two-wheeler swerves and slowing traffic during peak hours.",
+      location: "Silk Board Junction, HSR Layout, Bengaluru",
       status: "Reported",
       upvotes: 12,
-      reportedAt: "2024-01-15",
-      photo: samplePothole
+      reportedAt: "2024-12-02",
+      photo: samplePothole,
     },
     {
       id: 2,
-      title: "Broken Streetlight - Park Avenue",
+      title: "Streetlight outage on 80 Feet Road (Indiranagar)",
       category: "streetlight",
-      description: "Streetlight has been out for over a week, creating safety concerns for pedestrians in the evening.",
-      location: "Park Avenue, Block 200",
+      description:
+        "Multiple poles not working between CMH Road junction and 12th Main. Area is very dim after 7 pm.",
+      location: "80 Feet Road, Indiranagar, Bengaluru",
       status: "In Progress",
       upvotes: 8,
-      reportedAt: "2024-01-12",
-      photo: sampleStreetlight
+      reportedAt: "2024-12-01",
+      photo: sampleStreetlight,
     },
     {
       id: 3,
-      title: "Overflowing Garbage Bins",
+      title: "Overflowing garbage near KR Market",
       category: "garbage",
-      description: "Multiple garbage bins overflowing, attracting pests and creating unsanitary conditions.",
-      location: "Oak Street Residential Area",
+      description:
+        "Bins overflowing onto the footpath; stray dogs tearing bags. Needs more frequent BBMP pickup on weekends.",
+      location: "KR Market, Chickpete, Bengaluru",
       status: "Resolved",
       upvotes: 15,
-      reportedAt: "2024-01-10",
-      photo: sampleGarbage
-    }
+      reportedAt: "2024-11-29",
+      photo: sampleGarbage,
+    },
   ]);
 
   const handleReportSubmit = (newIssue: Issue) => {
