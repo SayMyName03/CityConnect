@@ -14,6 +14,7 @@ interface RegisterPageProps {
 }
 
 const RegisterPage: React.FC<RegisterPageProps> = ({ userType }) => {
+  const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -43,7 +44,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ userType }) => {
     }
 
     try {
-      await register(name, email, password, userType);
+      await register(username, name, email, password, userType);
       toast.success(`Account created! Welcome as ${userType}`);
       navigate(userType === 'admin' ? '/admin' : '/');
     } catch (err: any) {
@@ -76,6 +77,22 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ userType }) => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Choose a username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <div className="relative">

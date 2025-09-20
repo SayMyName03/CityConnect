@@ -93,16 +93,30 @@ mongoose
     const userCount = await User.estimatedDocumentCount();
     let demoUser;
     if (userCount === 0) {
-      demoUser = await User.create({ name: 'Demo User', email: 'demo@local.test', password: 'password', role: 'citizen', provider: 'local' });
+      demoUser = await User.create({ 
+        username: 'demo',
+        name: 'Demo User', 
+        email: 'demo@local.test', 
+        password: 'password', 
+        role: 'citizen', 
+        provider: 'local' 
+      });
       console.log('Seeded demo user');
     } else {
       demoUser = await User.findOne();
     }
 
     // Seed admin user if not present
-    let adminUser = await User.findOne({ email: 'admin' });
+    let adminUser = await User.findOne({ username: 'admin' });
     if (!adminUser) {
-      adminUser = await User.create({ name: 'Admin', email: 'admin', password: '12345', role: 'admin', provider: 'local' });
+      adminUser = await User.create({ 
+        username: 'admin',
+        name: 'Admin', 
+        email: 'admin@cityconnect.local', 
+        password: '12345', 
+        role: 'admin', 
+        provider: 'local' 
+      });
       console.log('Seeded admin user');
     }
 

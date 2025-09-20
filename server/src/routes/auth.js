@@ -8,18 +8,24 @@ const router = express.Router();
 // Regular login
 router.post('/login', async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { login, password, role } = req.body; // 'login' can be email or username
 
-    // Find user by email
-    const user = await User.findOne({ email });
+    // Find user by email or username
+    const user = await User.findOne({
+      $or: [
+        { email: login },
+        { username: login }
+      ]
+    });
+    
     if (!user) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Check password
     const isValidPassword = await user.comparePassword(password);
     if (!isValidPassword) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Check role if specified
@@ -34,6 +40,7 @@ router.post('/login', async (req, res) => {
       token,
       user: {
         id: user._id,
+        username: user.username,
         name: user.name,
         email: user.email,
         role: user.role,
@@ -48,16 +55,33 @@ router.post('/login', async (req, res) => {
 // Register
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role = 'citizen' } = req.body;
+    const { username, name, email, password, role = 'citizen' } = req.body;
 
-    // Check if user exists
-    const existingUser = await User.findOne({ email });
+    // Validate required fields
+    if (!username || !name || !email || !password) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    // Check if user exists by email or username
+    const existingUser = await User.findOne({
+      $or: [
+        { email },
+        { username }
+      ]
+    });
+    
     if (existingUser) {
-      return res.status(400).json({ error: 'User already exists' });
+      if (existingUser.email === email) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+      if (existingUser.username === username) {
+        return res.status(400).json({ error: 'Username already exists' });
+      }
     }
 
     // Create user
     const user = await User.create({
+      username,
       name,
       email,
       password,
@@ -72,6 +96,7 @@ router.post('/register', async (req, res) => {
       token,
       user: {
         id: user._id,
+        username: user.username,
         name: user.name,
         email: user.email,
         role: user.role,

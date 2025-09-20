@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface User {
   id: string;
+  username?: string;
   name: string;
   email: string;
   role: 'citizen' | 'admin';
@@ -11,8 +12,8 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, password: string, role?: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role?: string) => Promise<void>;
+  login: (login: string, password: string, role?: string) => Promise<void>; // Changed email to login
+  register: (username: string, name: string, email: string, password: string, role?: string) => Promise<void>;
   logout: () => void;
   setUser: (user: User | null) => void;
 }
@@ -66,13 +67,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const login = async (email: string, password: string, role?: string) => {
+  const login = async (login: string, password: string, role?: string) => {
     const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password, role }),
+      body: JSON.stringify({ login, password, role }),
     });
 
     if (!response.ok) {
@@ -85,13 +86,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(data.user);
   };
 
-  const register = async (name: string, email: string, password: string, role?: string) => {
+  const register = async (username: string, name: string, email: string, password: string, role?: string) => {
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, email, password, role }),
+      body: JSON.stringify({ username, name, email, password, role }),
     });
 
     if (!response.ok) {

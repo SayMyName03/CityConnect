@@ -15,13 +15,13 @@ interface LoginPageProps {
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ userType }) => {
-  const [email, setEmail] = useState('');
+  const [login, setLogin] = useState(''); // Changed from email to login (can be username or email)
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { login } = useAuth();
+  const { login: authLogin } = useAuth(); // Renamed to avoid conflict
   const navigate = useNavigate();
 
 
@@ -31,7 +31,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ userType }) => {
     setError('');
 
     try {
-      await login(email, password, userType);
+      await authLogin(login, password, userType);
       toast.success(`Welcome! Logged in as ${userType}`);
       navigate(userType === 'admin' ? '/admin' : '/');
     } catch (err: any) {
@@ -66,15 +66,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ userType }) => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="login">Username or Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="login"
+                  type="text"
+                  placeholder="Enter your username or email"
+                  value={login}
+                  onChange={(e) => setLogin(e.target.value)}
                   className="pl-10"
                   required
                 />
