@@ -8,8 +8,10 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import AuthCallback from "./pages/AuthCallback";
+import AdminLoginPage from "./pages/AdminLoginPage";
+import AdminRegisterPage from "./pages/AdminRegisterPage";
 import NotFound from "./pages/NotFound";
+import ChatPage from "./pages/ChatPage";
 
 const queryClient = new QueryClient();
 
@@ -21,14 +23,20 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<LoginPage userType="citizen" />} />
-            <Route path="/register" element={<RegisterPage userType="citizen" />} />
-            <Route path="/admin/login" element={<LoginPage userType="admin" />} />
-            <Route path="/admin/register" element={<RegisterPage userType="admin" />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
+            {/* Auth routes */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            {/* Convenience alias */}
+            <Route path="/signup" element={<Navigate to="/register" replace />} />
+            {/* Admin auth pages */}
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route path="/admin/register" element={<AdminRegisterPage />} />
+            <Route path="/admin/login" element={<Navigate to="/" replace />} />
+            <Route path="/admin/register" element={<Navigate to="/" replace />} />
+            {/* auth callback removed - external auth disabled */}
             
             {/* Protected routes */}
+            {/* Protected landing */}
             <Route 
               path="/" 
               element={
@@ -36,6 +44,14 @@ const App = () => (
                   <Index />
                 </ProtectedRoute>
               } 
+            />
+            <Route
+              path="/chat"
+              element={
+                <ProtectedRoute>
+                  <ChatPage />
+                </ProtectedRoute>
+              }
             />
             <Route 
               path="/admin" 

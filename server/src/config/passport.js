@@ -16,7 +16,7 @@ const buildCallbackURL = () => {
 
 const callbackURL = buildCallbackURL();
 
-// Only configure Google strategy if credentials are provided
+// Configure Google strategy if credentials are provided
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   try {
     passport.use(
@@ -75,7 +75,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   }
 } else {
   // eslint-disable-next-line no-console
-  console.warn('Google OAuth credentials not provided. Google authentication disabled.');
+  console.warn('Google OAuth not enabled or credentials not provided. Google authentication disabled.');
 }
 
 // Serialize user for session

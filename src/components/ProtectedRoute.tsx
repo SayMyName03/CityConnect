@@ -22,6 +22,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
   }
 
   if (!user) {
+    // If there's no authenticated user, send them to the login page.
+    // Previously this redirected to '/', which caused a redirect loop when
+    // the root route was itself protected.
     return <Navigate to="/login" replace />;
   }
 

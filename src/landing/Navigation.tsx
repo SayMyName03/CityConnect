@@ -7,9 +7,8 @@ const Navigation: React.FC = () => {
         <div className="font-bold">CityConnect</div>
       </div>
       <div className="space-x-4">
-        <a href="/login" className="text-sm hover:underline">Sign in</a>
-        <a href="/register" className="text-sm hover:underline">Register</a>
-        <a href="/app" className="text-sm font-semibold ml-2">Open App</a>
+        <a href="/login" className="text-sm">Sign in</a>
+        <a href="/register" className="text-sm font-semibold ml-2">Create account</a>
       </div>
     </nav>
   );

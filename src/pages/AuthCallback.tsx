@@ -1,56 +1,30 @@
 import React, { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
+// Reads token and role from query string (?token=...&role=admin) and stores the token
+// then redirects to the appropriate page so the SPA picks up authenticated state.
 const AuthCallback: React.FC = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setUser } = useAuth();
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    const role = searchParams.get('role');
-    const error = searchParams.get('error');
-
-    if (error) {
-      toast.error('Authentication failed');
-      navigate('/login');
-      return;
-    }
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const role = params.get('role');
 
     if (token) {
       localStorage.setItem('token', token);
-      
-      // Fetch user data
-      fetch('/api/auth/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setUser(data.user);
-          toast.success(`Welcome! Logged in as ${role}`);
-          navigate(role === 'admin' ? '/admin' : '/');
-        })
-        .catch(() => {
-          toast.error('Failed to fetch user data');
-          navigate('/login');
-        });
-    } else {
-      navigate('/login');
     }
-  }, [searchParams, navigate, setUser]);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">Completing authentication...</p>
-      </div>
-    </div>
-  );
+    if (role === 'admin') {
+      navigate('/admin', { replace: true });
+    } else {
+      navigate('/', { replace: true });
+    }
+    // Reload so that AuthContext sees the token on startup
+    setTimeout(() => window.location.reload(), 200);
+  }, [navigate]);
+
+  return null;
 };
 
 export default AuthCallback;

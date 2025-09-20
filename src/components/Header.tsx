@@ -44,7 +44,7 @@ const Header = ({ currentView, onViewChange }: HeaderProps) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const getInitials = (name: string) => {
