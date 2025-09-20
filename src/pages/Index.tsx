@@ -6,6 +6,7 @@ import MapArea from "@/components/MapArea";
 import ReportModal from "@/components/ReportModal";
 import IssueCard, { Issue } from "@/components/IssueCard";
 import AdminDashboard from "@/components/AdminDashboard";
+import Chatbot from "@/components/Chatbot";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createIssue, listIssues, upvoteIssue, updateIssueStatus, listLocalities } from "@/lib/api";
@@ -176,6 +177,9 @@ const Index = () => {
         onClose={() => setIsReportModalOpen(false)}
         onSubmit={handleReportSubmit}
       />
+
+      {/* Floating Chatbot */}
+      <Chatbot />
     </div>
   );
 };

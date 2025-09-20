@@ -12,6 +12,7 @@ import issueTypesRouter from './routes/issueTypes.js';
 import localitiesRouter from './routes/localities.js';
 import usersRouter from './routes/users.js';
 import authRouter from './routes/auth.js';
+import chatbotRouter from './routes/chatbot.js';
 import IssueType from './models/IssueType.js';
 
 dotenv.config();
@@ -50,6 +51,7 @@ app.use('/api/issues', issuesRouter);
 app.use('/api/issue-types', issueTypesRouter);
 app.use('/api/localities', localitiesRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/chatbot', chatbotRouter);
 
 // Connect + seed then start
 mongoose

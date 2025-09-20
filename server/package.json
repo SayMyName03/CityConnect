@@ -9,6 +9,7 @@
     "lint": "echo 'no linter configured'"
   },
   "dependencies": {
+    "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "city-voice-portal-server": "file:",
     "connect-mongo": "^5.1.0",
